@@ -575,9 +575,9 @@ def main():
 
                                                         # Trích xuất văn bản sử dụng pytesseract
                                                         text = pytesseract.image_to_string(image)
-
+                                                        text_id="MÃ BHYT: "+text
                                                         # Hiển thị kết quả
-                                                        st.write("MÃ BHYT: "+text)
+                                                        st.write(text_id)
                                                 if name_type == 'name':
                                                     id_rows = df[df['name'] == 'name']
 
@@ -661,6 +661,9 @@ def main():
                                 file_booking = f"Ngày đặt lịch: {selected_date}\nGiờ đặt lịch: {selected_time.strftime('%H:%M')}\n{type}"
                                 with open(file_path, "w", encoding="utf-8") as f:
                                     f.write(file_booking)
+                                file_inf_bhyt = f"{text_id}\n{text_name}\n{text_sex}\n{text_birth}\n{text_place}"
+                                with open(file_path, "w", encoding="utf-8") as f:
+                                    f.write(file_inf_bhyt)
                                 img.save(f'{directory}/diseases_image.jpg')
                                 file_mail = f'{directory}/{mail}.txt'
                                 with open( file_mail, "w", encoding="utf-8") as f:
