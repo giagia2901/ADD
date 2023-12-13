@@ -574,7 +574,7 @@ def main():
                                                         image=cropped_img
 
                                                         # Trích xuất văn bản sử dụng pytesseract
-                                                        text = pytesseract.image_to_string(image, lang='vie')
+                                                        text = pytesseract.image_to_string(image)
 
                                                         # Hiển thị kết quả
                                                         st.write("MÃ BHYT: "+text)
@@ -591,7 +591,7 @@ def main():
                                                         cropped_img = ImageOps.expand(cropped_img, border=border_size, fill='white')
                                                         image=cropped_img
                                                         # Trích xuất văn bản sử dụng pytesseract
-                                                        text = pytesseract.image_to_string(image, lang='vie')
+                                                        text = pytesseract.image_to_string(image)
                                                         text_name= "HỌ VÀ TÊN: "+text
 
                                                         # Hiển thị kết quả
@@ -610,7 +610,7 @@ def main():
                                                         image=cropped_img
 
                                                         # Trích xuất văn bản sử dụng pytesseract
-                                                        text = pytesseract.image_to_string(image, lang='vie')
+                                                        text = pytesseract.image_to_string(image)
                                                         text_birth= "NGÀY THÁNG NĂM SINH: "+text
                                                         # Hiển thị kết quả
                                                         st.write(text_birth)
@@ -627,7 +627,7 @@ def main():
                                                         cropped_img = ImageOps.expand(cropped_img, border=border_size, fill='white')
                                                         image=cropped_img
                                                         # Trích xuất văn bản sử dụng pytesseract
-                                                        text = pytesseract.image_to_string(image, lang='vie')
+                                                        text = pytesseract.image_to_string(image)
                                                         if text: 
                                                         # Hiển thị kết quả
                                                             text_sex= "GIỚI TÍNH: "+text
@@ -650,7 +650,7 @@ def main():
                                                         image=cropped_img
 
                                                         # Trích xuất văn bản sử dụng pytesseract
-                                                        text = pytesseract.image_to_string(image, lang='vie')
+                                                        text = pytesseract.image_to_string(image)
                                                         text_place= "NƠI KHÁM CHỮA BỆNH BAN ĐẦU: "+text
                                                         # Hiển thị kết quả
                                                         st.write(text_place)
