@@ -4,8 +4,6 @@
 # Base ------------------------------------------------------------------------
 streamlit
 pytesseract 
-tesseract-ocr
-tesseract-ocr-por
 streamlit-webrtc
 gitpython>=3.1.30
 matplotlib>=3.3
