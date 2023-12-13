@@ -5,7 +5,6 @@
 streamlit
 pytesseract
 tesseract 
-pytesseract Pillow
 streamlit-webrtc
 gitpython>=3.1.30
 matplotlib>=3.3
