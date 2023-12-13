@@ -661,9 +661,6 @@ def main():
                                 file_booking = f"Ngày đặt lịch: {selected_date}\nGiờ đặt lịch: {selected_time.strftime('%H:%M')}\n{type}"
                                 with open(file_path, "w", encoding="utf-8") as f:
                                     f.write(file_booking)
-                                file_inf_bhyt = f"{text_id}\n{text_name}\n{text_sex}\n{text_birth}\n{text_place}"
-                                with open(file_path, "w", encoding="utf-8") as f:
-                                    f.write(file_inf_bhyt)
                                 img.save(f'{directory}/diseases_image.jpg')
                                 file_mail = f'{directory}/{mail}.txt'
                                 with open( file_mail, "w", encoding="utf-8") as f:
