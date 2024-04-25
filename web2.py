@@ -19,12 +19,7 @@ def load_model(path: str = 'weights/best.pt'):
     return model
 
 @st.cache()
-def load_model_qr(path: str='weights/best_qr.pt'):
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path = path)
-    return model
-
-@st.cache()
-def load_model_bhyt(path: str='weights/best_bhyt.pt'):
+def load_model_swap(path: str='weights/best_swap.pt'):
     model = torch.hub.load('ultralytics/yolov5', 'custom', path = path)
     return model
 
@@ -32,9 +27,9 @@ def load_model_bhyt(path: str='weights/best_bhyt.pt'):
 def load_model_inf(path: str='weights/best_inf.pt'):
     model = torch.hub.load('ultralytics/yolov5', 'custom', path = path)
     return model
+
 @st.cache()
-def find_point(df):
-    xmin, ymin, xmax, ymax = df['xmin'].item(), df['ymin'].item(), df['xmax'].item(), df['ymax'].item()
+def find_point(xmin, ymin, xmax, ymax):
     x_center = (xmin + xmax) / 2
     y_center = (ymin + ymax) / 2
     data = [{'x': x_center, 'y': y_center}]
@@ -85,8 +80,7 @@ def main():
     )
 
     model = load_model()
-    model_qr = load_model_qr()
-    model_bhyt = load_model_bhyt()
+    model_swap = load_model_swap()
     model_inf = load_model_inf()
     all_images = load_file_structure()
     types_of_diseases = sorted(list(all_images['train'].keys()))
@@ -497,44 +491,48 @@ def main():
                                 if file_img_bhyt:
                                     if os.path.isdir('./runs'):
                                         shutil.rmtree('./runs')
-                                    results = get_prediction(img_bhyt, model_qr)
+                                    results = get_prediction(img_bhyt, model_swap)
                                     results.save()
                                     img_res = cv2.imread('./runs/detect/exp/image0.jpg')
                                     img_res = cv2.cvtColor(img_res, cv2.COLOR_BGR2RGB)
                                     df = results.pandas().xyxy[0]
                                     del df['class']
-                                    data_qr=find_point(df)
-                                    x_qr, y_qr = data_qr[0]['x'], data_qr[0]['y']
+                                    des = set()
+                                    for name_type in df['name']:
+                                        if name_type not in des:
+                                            if name_type == 'qr':
+                                                id_rows = df[df['name'] == 'qr']
+                                                    # Lặp qua từng hàng trong DataFrame với 'name_type' là 'qr'
+                                                for index, row in id_rows.iterrows():
+                                                    x_min, y_min, x_max, y_max = row['xmin'], row['ymin'], row['xmax'], row['ymax']
+                                                    data_qr=find_point(x_min, y_min, x_max, y_max)
+                                                    x_qr, y_qr = data_qr[0]['x'], data_qr[0]['y']
 
-                                    if os.path.isdir('./runs'):
-                                        shutil.rmtree('./runs')
-                                    results = get_prediction(img_bhyt, model_bhyt)
-                                    results.save()
-                                    img_res = cv2.imread('./runs/detect/exp/image0.jpg')
-                                    img_res = cv2.cvtColor(img_res, cv2.COLOR_BGR2RGB)
-                                    df = results.pandas().xyxy[0]
-                                    del df['class']
-                                    x_min, y_min, x_max, y_max = df['xmin'].item(), df['ymin'].item(), df['xmax'].item(), df['ymax'].item()
-
-                                                            # Cắt ảnh
-                                    cropped_img = img_bhyt.crop((x_min, y_min, x_max, y_max))
-
-                                                        # Hiển thị ảnh gốc và ảnh đã cắ
-
-                                    data_bhyt=find_point(df)
-                                    x_bhyt, y_bhyt = data_bhyt[0]['x'], data_bhyt[0]['y']
-
-
+                                            if name_type == 'bhyt':
+                                                id_rows = df[df['name'] == 'bhyt']
+                                                    # Lặp qua từng hàng trong DataFrame với 'name_type' là 'bhyt'
+                                                for index, row in id_rows.iterrows():
+                                                    x_min, y_min, x_max, y_max = row['xmin'], row['ymin'], row['xmax'], row['ymax']
+                                                    data_bhyt=find_point(x_min, y_min, x_max, y_max)
+                                                    x_bhyt, y_bhyt = data_bhyt[0]['x'], data_bhyt[0]['y']                                
+                                                    # Cắt ảnh
+                                                    cropped_img = img_bhyt.crop((x_min, y_min, x_max, y_max))
+                                                    # Hiển thị ảnh gốc và ảnh đã cắt
+                                                    cropped_img = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2RGB)
+                                                    st.image(cropped_img, use_column_width=True)
+                                    #so sánh tâm để xoay ảnh
                                     if x_qr > x_bhyt and y_qr < y_bhyt:
                                         rotated_image = cropped_img.rotate(180, expand=True)
 
                                     elif x_qr < x_bhyt and y_qr > y_bhyt:
                                         rotated_image = cropped_img
+
                                     elif x_qr > x_bhyt and y_qr > y_bhyt:
                                         rotated_image = cropped_img.rotate(-90, expand=True)
+
                                     else:
                                         rotated_image = cropped_img.rotate(90, expand=True)
-
+                                    #ảnh sau khi xoay
                                     st.image( rotated_image, use_column_width=True)
 
                                     if os.path.exists('./runs'):
@@ -547,8 +545,8 @@ def main():
 
                                     img_res = cv2.imread('./runs/detect/exp/image0.jpg')
                                     if img_res is not None:
-                                        img_res = cv2.cvtColor(img_res, cv2.COLOR_BGR2RGB)
 
+                                        img_res = cv2.cvtColor(img_res, cv2.COLOR_BGR2RGB)
                                         st.image(img_res, use_column_width=True)
 
                                         df = results.pandas().xyxy[0]
@@ -797,7 +795,6 @@ def main():
 
                   # Hiển thị nội dung markdown
         st.markdown(markdown_text, unsafe_allow_html=True)
-
 
 if __name__ == '__main__':
     main()
